@@ -1,0 +1,58 @@
+<div style="font-family: Arial, sans-serif; max-width: 500px; margin: 20px auto; border: 1px solid #003399; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.1);">
+    
+    <div style="background-color: #003399; color: white; padding: 15px; text-align: center;">
+        <h2 style="margin: 0; font-size: 20px;">Attendance Tracker</h2>
+        <p style="margin: 5px 0 0; font-size: 12px; opacity: 0.8;">Learning Coach Verification</p>
+    </div>
+
+    <div style="padding: 20px; background-color: #f9f9f9;">
+        <form id="attendanceForm">
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Select Student:</label>
+            <select id="studentName" style="width: 100%; padding: 10px; margin-bottom: 15px; border: 1px solid #ccc; border-radius: 4px;">
+                <option value="">-- Choose Student --</option>
+                <option value="student_1">Student A</option>
+                <option value="student_2">Student B</option>
+            </select>
+
+            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Status:</label>
+            <div style="margin-bottom: 20px;">
+                <input type="radio" id="present" name="status" value="Present">
+                <label for="present" style="margin-right: 15px;">Present</label>
+                <input type="radio" id="absent" name="status" value="Absent">
+                <label for="absent">Absent</label>
+            </div>
+
+            <button type="button" onclick="submitAttendance()" style="width: 100%; background-color: #27ae60; color: white; border: none; padding: 12px; font-size: 16px; font-weight: bold; border-radius: 4px; cursor: pointer;">
+                Submit Attendance
+            </button>
+        </form>
+
+        <div id="responseMessage" style="margin-top: 15px; text-align: center; color: #27ae60; font-weight: bold; display: none;">
+            ✅ Attendance Logged Successfully!
+        </div>
+    </div>
+</div>
+
+<script>
+    function submitAttendance() {
+        const student = document.getElementById('studentName').value;
+        const status = document.querySelector('input[name="status"]:checked');
+        
+        if (!student || !status) {
+            alert("Please select both a student and a status.");
+            return;
+        }
+
+        // Logic for where the data goes (e.g., logging to console)
+        console.log("Logged:", student, status.value, new Date().toLocaleString());
+
+        // Show success message
+        document.getElementById('attendanceForm').reset();
+        document.getElementById('responseMessage').style.display = 'block';
+        
+        // Hide message after 3 seconds
+        setTimeout(() => {
+            document.getElementById('responseMessage').style.display = 'none';
+        }, 3000);
+    }
+</script>
