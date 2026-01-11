@@ -10,7 +10,7 @@
     
     <div style="background-color: #003399; color: white; padding: 25px; text-align: center;">
         <h2 style="margin: 0; font-size: 22px; letter-spacing: 0.5px;">Attendance Tracker</h2>
-        <p style="margin: 5px 0 0; font-size: 13px; opacity: 0.9;">K12 Learning Coach Verification</p>
+        <p style="margin: 5px 0 0; font-size: 13px; opacity: 0.9;">HCCA Learning Coach Verification</p>
     </div>
 
     <div style="padding: 30px;">
@@ -33,3 +33,74 @@
         <button id="submitBtn" onclick="sendData()" style="width: 100%; background-color: #28a745; color: white; border: none; padding: 15px; font-size: 16px; font-weight: bold; border-radius: 6px; cursor: pointer; transition: background 0.3s ease;">
             Submit Attendance
         </button>
+
+        <p id="msgSuccess" style="display:none; text-align:center; color: #155724; background-color: #d4edda; padding: 10px; border-radius: 4px; margin-top: 20px; font-weight: bold;">
+            ✅ Logged to Google Sheets!
+        </p>
+        <p id="msgError" style="display:none; text-align:center; color: #721c24; background-color: #f8d7da; padding: 10px; border-radius: 4px; margin-top: 20px;">
+            ❌ Error. Please try again.
+        </p>
+    </div>
+    
+    <div style="background-color: #f8f9fa; padding: 15px; text-align: center; font-size: 11px; color: #6c757d; border-top: 1px solid #eee;">
+        Date: <span id="currentDate"></span>
+    </div>
+</div>
+
+<script>
+    // 1. YOUR DEPLOYMENT URL
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbwNKIQw75XEM2I7fLYvFk-0ubZiovaMHkQLT4kY3B8suRIkStQ-yD3_0V-KAL2AbeEXCA/exec';
+
+    // 2. EXTRACT STUDENT NAME FROM URL (?student=Name)
+    const urlParams = new URLSearchParams(window.location.search);
+    const rawStudent = urlParams.get('student');
+    const studentName = rawStudent ? decodeURIComponent(rawStudent).replace(/_/g, ' ') : "No Student Selected";
+    
+    document.getElementById('studentDisplay').innerText = studentName;
+    document.getElementById('currentDate').innerText = new Date().toLocaleDateString();
+
+    async function sendData() {
+        const statusChoice = document.querySelector('input[name="status"]:checked');
+        const btn = document.getElementById('submitBtn');
+        const successMsg = document.getElementById('msgSuccess');
+        const errorMsg = document.getElementById('msgError');
+
+        if (!statusChoice) {
+            alert("Please select 'Present' or 'Absent' before submitting.");
+            return;
+        }
+        
+        if (studentName === "No Student Selected") {
+            alert("Error: No student identifier found in the URL.");
+            return;
+        }
+
+        const status = statusChoice.value;
+        btn.disabled = true;
+        btn.innerText = "Sending to Records...";
+        btn.style.backgroundColor = "#6c757d";
+
+        try {
+            // Send data to your Google Apps Script
+            await fetch(`${scriptURL}?student=${encodeURIComponent(studentName)}&status=${status}`, { 
+                mode: 'no-cors',
+                method: 'GET'
+            });
+            
+            // Success Feedback
+            successMsg.style.display = 'block';
+            errorMsg.style.display = 'none';
+            btn.innerText = "Attendance Submitted";
+            btn.style.backgroundColor = "#1e3c72";
+        } catch (e) {
+            console.error('Error!', e.message);
+            errorMsg.style.display = 'block';
+            btn.disabled = false;
+            btn.innerText = "Try Again";
+            btn.style.backgroundColor = "#28a745";
+        }
+    }
+</script>
+
+</body>
+</html>
